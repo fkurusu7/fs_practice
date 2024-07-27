@@ -48,3 +48,46 @@ console.log(average(192, 4));
 // ARROW Function
 const sum = (p1, p2) => p1 + p2;
 console.log(sum(3, 4));
+
+/****************** */
+// THIS
+/****************** */
+
+const name = "Tere";
+
+const arto = {
+  name: "Arto Hellas",
+  age: 35,
+  education: "PhD",
+  greet: function () {
+    console.log("hello, my name is " + this.name);
+  },
+  doAddition: function (a, b) {
+    console.log(a + b);
+  },
+};
+
+const referenceToAddition = arto.doAddition;
+referenceToAddition(12, 2);
+const referenceToGreet = arto.greet;
+referenceToGreet(); // ==> hello, my name is undefined
+const referenceToGreetBind = arto.greet.bind(arto);
+referenceToGreetBind(); // ==> hello, my name is Arto Hellas
+
+/****************** */
+// CLASSES
+/****************** */
+
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  greet() {
+    console.log("Hello, my name is " + this.name);
+  }
+}
+
+const adam = new Person("Adam", 20);
+adam.greet();
