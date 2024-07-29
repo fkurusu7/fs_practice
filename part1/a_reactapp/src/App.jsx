@@ -13,7 +13,12 @@ function History({ allClicks }) {
   return <div>button press history: {allClicks.join(" ")}</div>;
 }
 
+function Display({ value }) {
+  return <div>{value}</div>;
+}
+
 const App = () => {
+  const [value, setValue] = useState(0);
   const [clicks, setClicks] = useState({
     left: 0,
     right: 0,
@@ -37,7 +42,21 @@ const App = () => {
     setTotal(clicks.left + updatedRight);
   };
 
+  const handleReset = () => {
+    setClicks({
+      left: 0,
+      right: 0,
+    });
+    setAll([]);
+    setTotal(0);
+  };
+
   // debugger;
+
+  // Function returning a function
+  const handleHello = (who) => () => console.log(`Helolo, ${who}`);
+
+  const setToValue = (value) => () => setValue(value);
 
   return (
     <div>
@@ -47,6 +66,11 @@ const App = () => {
       {clicks.right}
       <History allClicks={allClicks} />
       <p>Total: {total}</p>
+      <button onClick={handleReset}>Reset to Zero</button>
+      <Button onClick={handleHello("Fer")} text="Say Hello in the console" />
+      <hr />
+      <Button onClick={setToValue(1000)} text="Set Vaue to???" />
+      <Display value={value} />
     </div>
   );
 };
