@@ -5,6 +5,8 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 app.use(cors());
+// To show static content
+app.use(express.static("dist"));
 
 morgan.token("type", function (req, res) {
   return JSON.stringify(req.body);
@@ -13,17 +15,20 @@ morgan.format(
   "kurusu",
   ":method :url :status :response-time ms - :res[content-length] :type"
 );
-2359;
-4632;
-8101;
+
 app.use(morgan("kurusu"));
 
 let notes = [
-  { id: "1", content: "HTML is easy", important: true },
-  { id: "2", content: "Browser can execute only JavaScript", important: false },
+  { id: "1", content: "HTML/CSS are easy", important: true },
+  {
+    id: "2",
+    content: "Browser and Server can execute only JavaScript",
+    important: false,
+  },
   {
     id: "3",
-    content: "GET and POST are the most important methods of HTTP protocol",
+    content:
+      "GET and POST, yeah!, are the most important methods of HTTP protocol",
     important: true,
   },
 ];
