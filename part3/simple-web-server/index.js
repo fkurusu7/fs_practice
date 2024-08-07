@@ -2,6 +2,15 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+const requestLogger = (request, response, next) => {
+  console.log("Method:", request.method);
+  console.log("Path:  ", request.path);
+  console.log("Body:  ", request.body);
+  console.log("---");
+  next();
+};
+app.use(requestLogger);
+
 let notes = [
   { id: "1", content: "HTML is easy", important: true },
   { id: "2", content: "Browser can execute only JavaScript", important: false },
@@ -64,6 +73,14 @@ app.post("/api/notes", (req, res) => {
 
   res.json(note);
 });
+
+// Middleware used for catching requests made to non-existent routes
+
+const unknownEndpooint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpooint);
 
 const PORT = 10001;
 app.listen(PORT, () => {
