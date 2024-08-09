@@ -1,4 +1,6 @@
 // require("dotenv").config();
+// 2359;4632;8101;
+
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);

@@ -34,13 +34,7 @@ app.get("/api/notes", (request, response) => {
 // ROUTE GET a single note
 app.get("/api/notes/:id", (req, res) => {
   const id = req.params.id;
-  const note = notes.find((note) => note.id === id);
-
-  if (note) {
-    res.json(note);
-  } else {
-    res.status(404).end();
-  }
+  Note.findById(id).then((note) => res.json(note));
 });
 
 // ROUTE DELETE a note
@@ -65,15 +59,14 @@ app.post("/api/notes", (req, res) => {
     return res.status(400).json({ error: "content missing" });
   }
 
-  const note = {
-    id: generateId(),
+  const note = new Note({
     content: body.content,
     important: Boolean(body.important) || false,
-  };
+  });
 
-  notes = notes.concat(note);
-
-  res.json(note);
+  note.save().then((savedNote) => {
+    res.json(savedNote);
+  });
 });
 
 // Middleware used for catching requests made to non-existent routes
