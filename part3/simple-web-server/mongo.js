@@ -19,12 +19,24 @@ const noteSchema = new mongoose.Schema({
 
 const Note = mongoose.model("Note", noteSchema);
 
+// SAVE --> insert
 const note = new Note({
-  content: "Html is pretty easy",
-  important: true,
+  content: "JS is pretty hard",
+  important: false,
 });
-
 note.save().then((result) => {
   console.log("note saved");
+  // mongoose.connection.close();
+});
+
+// FIND --> select
+Note.find({}).then((result) => {
+  result.forEach((note) => console.log(note));
+  // console.log(result);
+  // mongoose.connection.close();
+});
+
+Note.find({ important: false }).then((result) => {
+  result.forEach((note) => console.log(note));
   mongoose.connection.close();
 });

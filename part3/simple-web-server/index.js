@@ -1,6 +1,8 @@
+require("dotenv").config();
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const Note = require("./models/note");
 
 const app = express();
 app.use(express.json());
@@ -18,27 +20,15 @@ morgan.format(
 
 app.use(morgan("kurusu"));
 
-let notes = [
-  { id: "1", content: "HTML/CSS are easy", important: true },
-  {
-    id: "2",
-    content: "Browser and Server can execute only JavaScript",
-    important: false,
-  },
-  {
-    id: "3",
-    content:
-      "GET and POST, yeah!, are the most important methods of HTTP protocol",
-    important: true,
-  },
-];
-
+// *************************************
+// *********** ROUTES ***********
+// *************************************
 app.get("/", (request, response) => {
   response.send("<h1>Hello, Express!</h1>");
 });
 
 app.get("/api/notes", (request, response) => {
-  response.json(notes);
+  Note.find({}).then((notes) => response.json(notes));
 });
 
 // ROUTE GET a single note
@@ -95,7 +85,8 @@ const unknownEndpooint = (request, response) => {
 app.use(unknownEndpooint);
 
 // const PORT = 10001;
-const PORT = process.env.PORT || 10001;
+// const PORT = process.env.PORT || 10001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
