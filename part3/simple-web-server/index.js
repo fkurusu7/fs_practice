@@ -5,20 +5,22 @@ const cors = require("cors");
 const Note = require("./models/note");
 
 const app = express();
-app.use(express.json());
-app.use(cors());
+
+// *************************************
+// ************ MIDDLEWAREs ************
+// *************************************
 // To show static content
 app.use(express.static("dist"));
-
-morgan.token("type", function (req, res) {
+app.use(express.json());
+morgan.token("bodyToken", function (req, res) {
   return JSON.stringify(req.body);
 });
 morgan.format(
   "kurusu",
-  ":method :url :status :response-time ms - :res[content-length] :type"
+  ":method :url :status :response-time ms - :res[content-length] :bodyToken"
 );
-
 app.use(morgan("kurusu"));
+app.use(cors());
 
 // *************************************
 // *********** ROUTES ***********
@@ -32,24 +34,40 @@ app.get("/api/notes", (request, response) => {
 });
 
 // ROUTE GET a single note
-app.get("/api/notes/:id", (req, res) => {
+app.get("/api/notes/:id", (req, res, next) => {
   const id = req.params.id;
-  Note.findById(id).then((note) => res.json(note));
+  Note.findById(id)
+    .then((note) => {
+      if (note) {
+        res.json(note);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 // ROUTE DELETE a note
-app.delete("/api/notes/:id", (req, res) => {
+app.delete("/api/notes/:id", (req, res, next) => {
   const id = req.params.id;
-  notes = notes.filter((note) => note.id !== id);
-  res.status(204).end();
+  Note.findByIdAndDelete(id)
+    .then((result) => res.status(204).end())
+    .catch((error) => next(error));
 });
 
-const generateId = () => {
-  const maxId =
-    notes.length > 0 ? Math.max(...notes.map((note) => Number(note.id))) : 0;
+app.put("/api/notes/:id", (req, res, next) => {
+  const id = req.params.id;
+  const body = req.body;
 
-  return String(maxId + 1);
-};
+  const note = {
+    content: body.content,
+    important: body.important,
+  };
+
+  Note.findByIdAndUpdate(id, note, { new: true })
+    .then((updatedNote) => res.json(updatedNote))
+    .catch((error) => next(error));
+});
 
 // ROUTE POST
 app.post("/api/notes", (req, res) => {
@@ -70,12 +88,19 @@ app.post("/api/notes", (req, res) => {
 });
 
 // Middleware used for catching requests made to non-existent routes
-
 const unknownEndpooint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });
 };
-
 app.use(unknownEndpooint);
+
+const errorHandler = (error, req, res, next) => {
+  console.log(error.message);
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+app.use(errorHandler);
 
 // const PORT = 10001;
 // const PORT = process.env.PORT || 10001;
