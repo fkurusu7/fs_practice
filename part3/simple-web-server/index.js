@@ -57,34 +57,44 @@ app.delete("/api/notes/:id", (req, res, next) => {
 
 app.put("/api/notes/:id", (req, res, next) => {
   const id = req.params.id;
-  const body = req.body;
+  const { content, important } = req.body;
 
-  const note = {
-    content: body.content,
-    important: body.important,
-  };
+  // const note = {
+  //   content: body.content,
+  //   important: body.important,
+  // };
 
-  Note.findByIdAndUpdate(id, note, { new: true })
+  Note.findByIdAndUpdate(
+    id,
+    { content, important },
+    { new: true, runValidators: true, context: "query" }
+  )
     .then((updatedNote) => res.json(updatedNote))
     .catch((error) => next(error));
 });
 
 // ROUTE POST
-app.post("/api/notes", (req, res) => {
+app.post("/api/notes", (req, res, next) => {
   const body = req.body;
 
-  if (!body.content) {
-    return res.status(400).json({ error: "content missing" });
-  }
+  // This validation is no longer needed
+  // because the Schema already does it
+  // Throws a ValidationError
+  // if (!body.content) {
+  //   return res.status(400).json({ error: "content missing" });
+  // }
 
   const note = new Note({
     content: body.content,
     important: Boolean(body.important) || false,
   });
 
-  note.save().then((savedNote) => {
-    res.json(savedNote);
-  });
+  note
+    .save()
+    .then((savedNote) => {
+      res.json(savedNote);
+    })
+    .catch((error) => next(error));
 });
 
 // Middleware used for catching requests made to non-existent routes
@@ -97,6 +107,8 @@ const errorHandler = (error, req, res, next) => {
   console.log(error.message);
   if (error.name === "CastError") {
     return res.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return res.status(400).json({ error: error.message });
   }
   next(error);
 };
