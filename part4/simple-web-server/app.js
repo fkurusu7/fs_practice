@@ -18,7 +18,7 @@ logger.info("*** Connecting to:", config.MONGODB_URI);
 const ATLAS_STR = "MongoDB Atlas";
 
 mongoose
-  .connect(MONGODB_URI)
+  .connect(config.MONGODB_URI)
   .then(() => logger.info(`** connected to ${ATLAS_STR}`))
   .catch((error) =>
     logger.info(`** error connecting to ${ATLAS_STR} - ${error.message}`)
@@ -43,4 +43,4 @@ app.use("/api/notes", notesRouter);
 app.use(middleware.unknownEndpooint);
 app.use(middleware.errorHandler);
 
-module.exports = { app };
+module.exports = app;
