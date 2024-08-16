@@ -28,11 +28,11 @@ notesRouter.delete("/:id", async (req, res, next) => {
   res.status(204).end();
 });
 
-notesRouter.put("/:id", async (req, res, next) => {
+notesRouter.put("/:id", (req, res, next) => {
   const id = req.params.id;
   const { content, important } = req.body;
 
-  await Note.findByIdAndUpdate(
+  Note.findByIdAndUpdate(
     id,
     { content, important },
     { new: true, runValidators: true, context: "query" }
