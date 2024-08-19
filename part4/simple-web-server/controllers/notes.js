@@ -3,10 +3,17 @@
 // ************************************
 const notesRouter = require("express").Router();
 const Note = require("../models/note");
+const User = require("./../models/user");
 const { info } = require("../utils/logger");
 
-notesRouter.get("/", async (req, res) => {
-  await Note.find({}).then((notes) => res.json(notes));
+notesRouter.get("/", async (req, res, next) => {
+  // await Note.find({}).then((notes) => res.json(notes));
+  const notes = await Note.find({}).populate("user", { username: 1, name: 1 });
+  try {
+    res.status(200).json(notes);
+  } catch (error) {
+    next(error);
+  }
 });
 
 // ROUTE GET a single note
@@ -42,22 +49,21 @@ notesRouter.put("/:id", (req, res, next) => {
 });
 
 // ROUTE POST
+// :userId is passed to get A User
 notesRouter.post("/", async (req, res, next) => {
   const body = req.body;
+  const user = await User.findById(body.userId);
 
   const note = new Note({
     content: body.content,
     important: Boolean(body.important) || false,
+    user: user.id,
   });
 
-  // await note
-  //   .save()
-  //   .then((savedNote) => {
-  //     res.status(201).json(savedNote);
-  //   })
-  //   .catch((error) => next(error));
-
   const savedNote = await note.save();
+  user.notes = user.notes.concat(savedNote._id);
+  await user.save();
+
   res.status(201).json(savedNote);
 });
 

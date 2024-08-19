@@ -30,7 +30,7 @@ test.only("notes are returned as json", async () => {
 
 test.only("should be only two notes", async () => {
   const response = await api.get(BASE_PATH);
-  console.log("TWO: ", response.body);
+  // console.log("TWO: ", response.body);
   assert.strictEqual(response.body.length, helper.initialNotes.length);
 });
 
@@ -66,7 +66,7 @@ test.only("should not add a note without content", async () => {
   assert.strictEqual(notesAtEnd.length, helper.initialNotes.length);
 });
 
-test("should get a specific note", async () => {
+test.only("should get a specific note", async () => {
   const notesAtStart = await helper.notesInDb();
 
   const noteToView = notesAtStart[0];
@@ -79,7 +79,7 @@ test("should get a specific note", async () => {
   assert.deepStrictEqual(resultNote.body, noteToView);
 });
 
-test("should delete a note", async () => {
+test.only("should delete a note", async () => {
   const notesAtStart = await helper.notesInDb();
   const noteToDelete = notesAtStart[0];
 
