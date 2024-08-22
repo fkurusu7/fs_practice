@@ -1,0 +1,19 @@
+h1 {
+  color: aliceblue;
+}
+
+li.note {
+  color: beige;
+  padding-top: 3px;
+  font-size: 15px;
+}
+
+.error {
+  background-color: gainsboro;
+  border: 1px solid red;
+  border-radius: 5px;
+  color: red;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
