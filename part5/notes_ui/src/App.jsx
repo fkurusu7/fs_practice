@@ -40,12 +40,29 @@ function App() {
     });
   }, []);
 
+  useEffect(() => {
+    const loggedInUserJSON = window.localStorage.getItem("loggedNoteAppUser");
+    if (loggedInUserJSON) {
+      const user = JSON.parse(loggedInUserJSON);
+      setUser(user);
+      notesService.setToken(user.token);
+    }
+    // return () => {
+    // }
+  }, []);
+
+  const handleLogout = () => {
+    console.log("Logging out...");
+    window.localStorage.clear();
+  };
+
   const handleLogin = async (ev) => {
     ev.preventDefault();
     console.log(`logged with: ${username} ${password}`);
 
     try {
       const user = await loginService.login({ username, password });
+      window.localStorage.setItem("loggedNoteAppUser", JSON.stringify(user));
       notesService.setToken(user.token);
       setUser(user);
       setUsername("");
@@ -119,7 +136,12 @@ function App() {
         />
       ) : (
         <div>
-          <p>{user.name} logged in</p>
+          <p>
+            Welcome, {user.name}.
+            <button type="button" onClick={handleLogout}>
+              Logout
+            </button>
+          </p>
           <NoteForm
             addNote={addNote}
             handleNoteChange={handleNoteChange}
