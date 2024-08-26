@@ -1,9 +1,31 @@
-function NoteForm({ addNote, newNote, handleNoteChange }) {
+import { useState } from "react";
+
+function NoteForm({ onCreateNote }) {
+  const [newNote, setNewNote] = useState("");
+
+  // POST http
+  const addNote = (ev) => {
+    ev.preventDefault();
+    createNote({
+      content: newNote,
+      important: false,
+    });
+
+    setNewNote("");
+  };
+
   return (
-    <form onSubmit={addNote}>
-      <input type="text" value={newNote} onChange={handleNoteChange} />
-      <button type="submit">save</button>
-    </form>
+    <div>
+      <h2>Create a new Note</h2>
+      <form onSubmit={addNote}>
+        <input
+          type="text"
+          value={newNote}
+          onChange={({ target }) => setNewNote(target.value)}
+        />
+        <button type="submit">save</button>
+      </form>
+    </div>
   );
 }
 

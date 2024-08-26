@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import Note from "./components/Note";
 import Notification from "./components/Notification";
 import notesService from "./services/notes";
-import loginService from "./services/login";
 import NoteForm from "./components/NoteForm";
 import LoginForm from "./components/LoginForm";
+import Togglable from "./components/Togglable";
 
 const Footer = () => {
   const footerStyle = { color: "green", fontStyle: "italic", fontSize: 16 };
@@ -20,14 +20,8 @@ const Footer = () => {
 
 function App() {
   const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
-
-  // ********************************************
-  // LOGIN
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
   // ********************************************
 
@@ -35,7 +29,6 @@ function App() {
 
   useEffect(() => {
     notesService.getAll().then((initialNotes) => {
-      console.log(initialNotes);
       setNotes(initialNotes);
     });
   }, []);
@@ -47,53 +40,17 @@ function App() {
       setUser(user);
       notesService.setToken(user.token);
     }
-    // return () => {
-    // }
   }, []);
 
   const handleLogout = () => {
     console.log("Logging out...");
     window.localStorage.clear();
+    setUser(null);
   };
 
-  const handleLogin = async (ev) => {
-    ev.preventDefault();
-    console.log(`logged with: ${username} ${password}`);
-
-    try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem("loggedNoteAppUser", JSON.stringify(user));
-      notesService.setToken(user.token);
-      setUser(user);
-      setUsername("");
-      setPassword("");
-    } catch (error) {
-      setErrorMessage("Wrong Credentials");
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
-      setUsername("");
-      setPassword("");
-    }
-  };
-
-  // Input for new note
-  const handleNoteChange = (ev) => {
-    setNewNote(ev.target.value);
-  };
-
-  // POST http
-  const addNote = (ev) => {
-    ev.preventDefault();
-    const newNoteObj = {
-      // id: String(notes.length + 1),
-      content: newNote,
-      important: Math.random() < 0.5,
-    };
-
-    notesService.create(newNoteObj).then((returnedNote) => {
+  const createNote = (noteObject) => {
+    notesService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
-      setNewNote("");
     });
   };
 
@@ -127,13 +84,9 @@ function App() {
       {errorMessage && <Notification message={errorMessage} />}
 
       {user === null ? (
-        <LoginForm
-          handleLogin={handleLogin}
-          username={username}
-          setUsername={setUsername}
-          password={password}
-          setPassword={setPassword}
-        />
+        <Togglable buttonLabel={"Log in"}>
+          <LoginForm setErrorMessage={setErrorMessage} setUser={setUser} />
+        </Togglable>
       ) : (
         <div>
           <p>
@@ -142,11 +95,9 @@ function App() {
               Logout
             </button>
           </p>
-          <NoteForm
-            addNote={addNote}
-            handleNoteChange={handleNoteChange}
-            newNote={newNote}
-          />
+          <Togglable buttonLabel={"new note"}>
+            <NoteForm onCreateNote={createNote} />
+          </Togglable>
         </div>
       )}
 
