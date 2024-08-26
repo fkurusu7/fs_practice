@@ -6,7 +6,7 @@ function NoteForm({ onCreateNote }) {
   // POST http
   const addNote = (ev) => {
     ev.preventDefault();
-    createNote({
+    onCreateNote({
       content: newNote,
       important: false,
     });

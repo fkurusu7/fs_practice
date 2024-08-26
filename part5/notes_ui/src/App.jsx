@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Note from "./components/Note";
 import Notification from "./components/Notification";
 import notesService from "./services/notes";
@@ -19,6 +19,8 @@ const Footer = () => {
 };
 
 function App() {
+  const noteFormRef = useRef();
+
   const [notes, setNotes] = useState([]);
   const [showAll, setShowAll] = useState(true);
   const [errorMessage, setErrorMessage] = useState(null);
@@ -52,6 +54,7 @@ function App() {
     notesService.create(noteObject).then((returnedNote) => {
       setNotes(notes.concat(returnedNote));
     });
+    noteFormRef.current.toggleVisibility();
   };
 
   // Toggle Importance of notes
@@ -95,7 +98,7 @@ function App() {
               Logout
             </button>
           </p>
-          <Togglable buttonLabel={"new note"}>
+          <Togglable buttonLabel={"new note"} ref={noteFormRef}>
             <NoteForm onCreateNote={createNote} />
           </Togglable>
         </div>
