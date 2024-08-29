@@ -1,4 +1,6 @@
 import { useState } from "react";
+import PropTypes from "prop-types";
+
 import loginService from "./../services/login";
 import notesService from "./../services/notes";
 
@@ -54,4 +56,8 @@ function LoginForm({ setErrorMessage, setUser }) {
   );
 }
 
+LoginForm.propTypes = {
+  setErrorMessage: PropTypes.string.isRequired,
+  setUser: PropTypes.string.isRequired,
+};
 export default LoginForm;
