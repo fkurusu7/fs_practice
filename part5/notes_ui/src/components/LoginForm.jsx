@@ -57,7 +57,7 @@ function LoginForm({ setErrorMessage, setUser }) {
 }
 
 LoginForm.propTypes = {
-  setErrorMessage: PropTypes.string.isRequired,
-  setUser: PropTypes.string.isRequired,
+  setErrorMessage: PropTypes.func.isRequired,
+  setUser: PropTypes.func.isRequired,
 };
 export default LoginForm;
