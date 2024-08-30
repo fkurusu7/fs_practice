@@ -29,6 +29,8 @@ node_modules
 *.local
 *.env
 .env
+coverage
+part5/notes_ui/coverage
 
 # Editor directories and files
 !.vscode/extensions.json
