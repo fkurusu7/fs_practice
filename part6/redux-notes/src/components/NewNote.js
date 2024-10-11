@@ -1,6 +1,5 @@
 import { useDispatch } from "react-redux";
 import { createNote } from "../reducers/noteReducer";
-import notesService from "../services/notes";
 
 const NewNote = (props) => {
   const dispatch = useDispatch();
@@ -9,8 +8,7 @@ const NewNote = (props) => {
     event.preventDefault();
     const content = event.target.note.value;
     event.target.note.value = "";
-    const newNote = await notesService.createNote(content);
-    dispatch(createNote(newNote));
+    dispatch(createNote(content));
   };
 
   return (
